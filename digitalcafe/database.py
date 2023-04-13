@@ -24,22 +24,18 @@ branches = {
     5: {"name":"Arcovia","phonenumber":"09179990004"},
 }
 
+def get_product(code):
+    return products[code]
+
 def get_products():
     product_list = []
 
-    products_coll = products_db["products"]
-
-    for p in products_coll.find({}):
-        product_list.append(p)
+    for i,v in products.items():
+        product = v
+        product.setdefault("code",i)
+        product_list.append(product)
 
     return product_list
-
-def get_product(code):
-    products_coll = products_db["products"]
-
-    product = products_coll.find_one({"code":code})
-
-    return product
 
 def get_branch(code):
     return branches[code]
