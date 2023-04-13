@@ -74,8 +74,16 @@ def addtocart():
     code = request.args.get('code', '')
     product = db.get_product(int(code))
     item=dict()
+<<<<<<< Updated upstream
     # A click to add a product translates to a 
     # quantity of 1 for now
+=======
+    
+    try:
+        item["qty"] = cart[code]["qty"] + 1
+    except:
+        item["qty"] = 1
+>>>>>>> Stashed changes
 
     item["qty"] = 1
     item["name"] = product["name"]
@@ -103,3 +111,14 @@ def update_cart():
         cart[code]["subtotal"] = cart[code]["price"] * new_qty
     session["cart"] = cart
     return redirect('/cart')
+<<<<<<< Updated upstream
+=======
+
+@app.route('/removefromcart')
+def remove_from_cart():
+    cart = session.get("cart", {})
+    code = request.args.get('code', '')
+    cart.pop(code)
+    session["cart"] = cart
+    return redirect('/cart')
+>>>>>>> Stashed changes
