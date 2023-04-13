@@ -75,7 +75,6 @@ def get_branches():
     return branch_list
 
 def get_user(username):
-    try:
-       return users[username]
-    except KeyError:
-       return None
+    customers_coll = order_management_db['customers']
+    user=customers_coll.find_one({"username":username})
+    return user
