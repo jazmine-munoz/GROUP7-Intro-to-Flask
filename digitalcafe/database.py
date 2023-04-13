@@ -1,3 +1,11 @@
+import pymongo
+
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+
+products_db = myclient["products"]
+
+order_management_db = myclient["order_management"]
+
 products = {
     100: {"name":"Americano","price":125},
     200: {"name":"Brewed Coffee","price":100},
