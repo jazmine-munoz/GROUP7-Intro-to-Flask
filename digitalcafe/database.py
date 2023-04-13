@@ -6,6 +6,16 @@ products_db = myclient["products"]
 
 order_management_db = myclient["order_management"]
 
+products = {
+    100: {"name":"Americano","price":125},
+    200: {"name":"Brewed Coffee","price":100},
+    300: {"name":"Cappuccino","price":120},
+    400: {"name":"Espresso","price":120},
+    1000:{"name":"Tiramisu","price":150},
+    1100:{"name":"Red Velvet","price":130},
+    1200:{"name":"Mango Cream Pie","price":200},
+}
+
 branches = {
     1: {"name":"Katipunan","phonenumber":"09179990000"},
     2: {"name":"Tomas Morato","phonenumber":"09179990001"},
