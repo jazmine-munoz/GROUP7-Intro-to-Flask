@@ -25,15 +25,19 @@ branches = {
 }
 
 def get_product(code):
-    return products[code]
+    products_coll = products_db["products"]
+
+    product = products_coll.find_one({"code":code})
+
+    return product
 
 def get_products():
     product_list = []
 
-    for i,v in products.items():
-        product = v
-        product.setdefault("code",i)
-        product_list.append(product)
+    products_coll = products_db["products"]
+
+    for p in products_coll.find({}):
+        product_list.append(p)
 
     return product_list
 
