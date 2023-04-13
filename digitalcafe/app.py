@@ -1,9 +1,19 @@
-from flask import Flask
+from flask import Flask,redirect
 from flask import render_template
 from flask import request
+from flask import session
 import database as db
+import authentication
+import logging
 
 app = Flask(__name__)
+
+# Set the secret key to some random bytes. 
+# Keep this really secret!
+app.secret_key = b's@g@d@c0ff33!'
+
+logging.basicConfig(level=logging.DEBUG)
+app.logger.setLevel(logging.INFO)
 
 @app.route('/')
 def index():
@@ -34,3 +44,73 @@ def branchdetails():
 @app.route('/aboutus')
 def aboutus():
     return render_template('aboutus.html', page="About Us")
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
+
+@app.route('/auth', methods = ['GET', 'POST'])
+def auth():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    is_successful, user = authentication.login(username, password)
+    app.logger.info('%s', is_successful)
+    if(is_successful):
+        session["user"] = user
+        return redirect('/')
+    else:
+        error = "Invalid username or password. Please try again."
+        return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop("user",None)
+    session.pop("cart",None)
+    return redirect('/')
+
+@app.route('/addtocart')
+def addtocart():
+    code = request.args.get('code', '')
+    product = db.get_product(int(code))
+    item=dict()
+
+    try:
+        item["qty"] = cart[code]["qty"] + 1
+    except:
+        item["qty"] = 1
+        
+    item["qty"] = 1
+    item["name"] = product["name"]
+    item["price"] = product["price"]
+    item["subtotal"] = product["price"]*item["qty"]
+
+    if(session.get("cart") is None):
+        session["cart"]={}
+
+    cart = session["cart"]
+    cart[code]=item
+    session["cart"]=cart
+    return redirect('/cart')
+
+@app.route('/cart')
+def cart():
+    return render_template('cart.html')
+
+@app.route('/updatecart', methods=['POST'])
+def update_cart():
+    cart = session.get("cart", {})
+    for code, item in cart.items():
+        new_qty = int(request.form.get(f"{code}-qty"))
+        cart[code]["qty"] = new_qty
+        cart[code]["subtotal"] = cart[code]["price"] * new_qty
+    session["cart"] = cart
+    return redirect('/cart')
+
+@app.route('/removefromcart')
+def remove_from_cart():
+    cart = session.get("cart", {})
+    code = request.args.get('code', '')
+    cart.pop(code)
+    session["cart"] = cart
+    return redirect('/cart')
