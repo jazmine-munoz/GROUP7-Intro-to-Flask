@@ -79,6 +79,7 @@ def addtocart():
 
     item["qty"] = 1
     item["name"] = product["name"]
+    item["price"] = product["price"]
     item["subtotal"] = product["price"]*item["qty"]
 
     if(session.get("cart") is None):
